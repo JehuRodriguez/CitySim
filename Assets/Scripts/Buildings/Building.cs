@@ -8,6 +8,9 @@ public abstract class Building : MonoBehaviour
     [SerializeField] protected string buildingName = "Edificio";
     [SerializeField] protected int cost = 100;
 
+    public string BuildingName => buildingName;
+    public int Cost => cost;
+
     public static event BuildingEventHandler OnBuildingConstructed;
 
     protected virtual void Start()
