@@ -1,0 +1,45 @@
+using UnityEngine;
+using System;
+
+public class EconomyManager : MonoBehaviour
+{
+    public static EconomyManager Instance { get; private set; }
+
+    [SerializeField] private int startingMoney = 1000;
+
+    public int Money { get; private set; }
+
+    public event Action<int> OnMoneyChanged;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        Money = startingMoney;
+    }
+
+    private void Start()
+    {
+        OnMoneyChanged?.Invoke(Money);
+    }
+
+    public void AddMoney(int amount)
+    {
+        if (amount <= 0) return;
+        Money += amount;
+        OnMoneyChanged?.Invoke(Money);
+    }
+
+    public bool TrySpend(int amount)
+    {
+        if (amount <= 0 || Money < amount) return false;
+        Money -= amount;
+        OnMoneyChanged?.Invoke(Money);
+        return true;
+    }
+
+}
