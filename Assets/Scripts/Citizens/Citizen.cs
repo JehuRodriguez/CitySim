@@ -1,8 +1,15 @@
+using UnityEngine;
+
 public class Citizen
 {
     public string Name { get; }
     public IResidence Home { get; set; }
     public IWorkplace Job { get; set; }
+
+    public Transform HomeTransform { get; set; }
+    public Transform WorkTransform { get; set; }
+
+
     public int Wallet { get; private set; }
 
     public bool HasJob => Job != null;

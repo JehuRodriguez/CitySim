@@ -420,6 +420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4cd179069d42c4d86e488d2b8028ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CitizenManager
+  citizenVisualPrefab: {fileID: 7602557627677307845, guid: e3df5e3b4088df942bc2de58f19d5bbe, type: 3}
 --- !u!114 &1030988221
 MonoBehaviour:
   m_ObjectHideFlags: 0
