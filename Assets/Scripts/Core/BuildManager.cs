@@ -1,6 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -14,16 +14,18 @@ public class BuildManager : MonoBehaviour
     [SerializeField] private int minCell = -5;
     [SerializeField] private int maxCell = 4;
 
-
     private readonly HashSet<Vector2Int> occupied = new HashSet<Vector2Int>();
     private Camera cam;
     private int selectedIndex;
 
-    
     public event Action<Building> OnSelectionChanged;
+    public event Action<string> OnMessage;
+
+    public Building[] Prefabs => buildingPrefabs;
+    public int SelectedIndex => selectedIndex;
 
     public Building Selected =>
-       (buildingPrefabs != null && buildingPrefabs.Length > 0) ? buildingPrefabs[selectedIndex] : null;
+        (buildingPrefabs != null && buildingPrefabs.Length > 0) ? buildingPrefabs[selectedIndex] : null;
 
     private void Awake()
     {
@@ -43,7 +45,6 @@ public class BuildManager : MonoBehaviour
 
     private void Update()
     {
-       
         for (int i = 0; i < buildingPrefabs.Length; i++)
         {
             if (NumberKeyPressed(i)) Select(i);
@@ -60,9 +61,18 @@ public class BuildManager : MonoBehaviour
         OnSelectionChanged?.Invoke(Selected);
     }
 
+    private void Notify(string text)
+    {
+        Debug.Log(text);
+        OnMessage?.Invoke(text);
+    }
+
     private void TryBuild()
     {
+
         if (cam == null || Selected == null) return;
+
+        if (UIManager.Instance != null && UIManager.Instance.IsPointerOverUI(PointerPosition())) return;
 
         Ray ray = cam.ScreenPointToRay(PointerPosition());
         Plane ground = new Plane(Vector3.up, Vector3.zero);
@@ -77,13 +87,13 @@ public class BuildManager : MonoBehaviour
 
         if (occupied.Contains(cell))
         {
-            Debug.Log("Esa celda ya está ocupada");
+            Notify("Esa celda ya está ocupada");
             return;
         }
 
         if (!EconomyManager.Instance.TrySpend(Selected.Cost))
         {
-            Debug.Log("No tienes dinero suficiente para " + Selected.BuildingName);
+            Notify("No tienes dinero suficiente para " + Selected.BuildingName);
             return;
         }
 
@@ -95,15 +105,17 @@ public class BuildManager : MonoBehaviour
 
         Building built = Instantiate(Selected, position, Quaternion.identity);
         occupied.Add(cell);
-        Debug.Log("Construido: " + built.GetInfo());
+        Notify("Construido: " + built.GetInfo());
     }
 
     private bool LeftClickPressed()
     {
 #if ENABLE_INPUT_SYSTEM
         return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+
 #else
         return Input.GetMouseButtonDown(0);
+
 #endif
     }
 
@@ -115,6 +127,7 @@ public class BuildManager : MonoBehaviour
         return Input.mousePosition;
 #endif
     }
+
 
     private bool NumberKeyPressed(int index)
     {
