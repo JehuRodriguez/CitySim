@@ -6,6 +6,8 @@ public class CitizenManager : MonoBehaviour
 {
     public static CitizenManager Instance { get; private set; }
 
+    [SerializeField] private CitizenVisual citizenVisualPrefab;
+
 
     private readonly List<Citizen> citizens = new List<Citizen>();
     private readonly Dictionary<IResidence, int> residents = new Dictionary<IResidence, int>();
@@ -76,8 +78,12 @@ public class CitizenManager : MonoBehaviour
                 citizenCounter++;
                 Citizen citizen = new Citizen("Ciudadano " + citizenCounter);
                 citizen.Home = home;
+                citizen.HomeTransform = building.transform;
                 residents[home]++;
                 citizens.Add(citizen);
+
+
+                SpawnVisual(citizen, building.transform.position);
             }
         }
 
@@ -91,6 +97,15 @@ public class CitizenManager : MonoBehaviour
         Debug.Log("Población: " + Population + " - Empleados: " + Employed);
     }
 
+    private void SpawnVisual(Citizen citizen, Vector3 housePosition)
+    {
+        if (citizenVisualPrefab == null) return;
+
+        Vector3 position = new Vector3(housePosition.x, 0.4f, housePosition.z);
+        CitizenVisual visual = Instantiate(citizenVisualPrefab, position, Quaternion.identity);
+        visual.Setup(citizen);
+    }
+
     private void AssignJobs()
     {
         foreach (Citizen citizen in citizens)
@@ -102,6 +117,7 @@ public class CitizenManager : MonoBehaviour
                 if (entry.Value < entry.Key.Jobs)
                 {
                     citizen.Job = entry.Key;
+                    citizen.WorkTransform = ((Building)entry.Key).transform;
                     employees[entry.Key] = entry.Value + 1;
                     break;
                 }

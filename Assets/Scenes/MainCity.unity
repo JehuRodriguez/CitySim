@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 1030988220}
   - component: {fileID: 1030988221}
   - component: {fileID: 1030988222}
+  - component: {fileID: 1030988223}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -419,6 +420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4cd179069d42c4d86e488d2b8028ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CitizenManager
+  citizenVisualPrefab: {fileID: 7602557627677307845, guid: e3df5e3b4088df942bc2de58f19d5bbe, type: 3}
 --- !u!114 &1030988221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,6 +454,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
   startingMoney: 1000
+--- !u!114 &1030988223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030988216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3391b2e1aafd09844bad4cf7bbfdc898, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
 --- !u!1 &1271128946
 GameObject:
   m_ObjectHideFlags: 0
