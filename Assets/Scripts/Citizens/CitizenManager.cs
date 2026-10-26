@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 public class CitizenManager : MonoBehaviour
 {
@@ -73,6 +74,8 @@ public class CitizenManager : MonoBehaviour
         if (building is IResidence home)
         {
             residents[home] = 0;
+            List<Citizen> newCitizens = new List<Citizen>();
+
             for (int i = 0; i < home.Capacity; i++)
             {
                 citizenCounter++;
@@ -81,10 +84,10 @@ public class CitizenManager : MonoBehaviour
                 citizen.HomeTransform = building.transform;
                 residents[home]++;
                 citizens.Add(citizen);
-
-
-                SpawnVisual(citizen, building.transform.position);
+                newCitizens.Add(citizen);
             }
+
+            StartCoroutine(SpawnOneByOne(newCitizens, building.transform.position));
         }
 
         if (building is IWorkplace work)
@@ -104,6 +107,15 @@ public class CitizenManager : MonoBehaviour
         Vector3 position = new Vector3(housePosition.x, 0.4f, housePosition.z);
         CitizenVisual visual = Instantiate(citizenVisualPrefab, position, Quaternion.identity);
         visual.Setup(citizen);
+    }
+
+    private IEnumerator SpawnOneByOne(List<Citizen> newCitizens, Vector3 housePosition)
+    {
+        foreach (Citizen citizen in newCitizens)
+        {
+            SpawnVisual(citizen, housePosition);
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private void AssignJobs()
