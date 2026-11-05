@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 #endif
 
 public class BuildManager : MonoBehaviour
@@ -72,7 +73,7 @@ public class BuildManager : MonoBehaviour
 
         if (cam == null || Selected == null) return;
 
-        if (UIManager.Instance != null && UIManager.Instance.IsPointerOverUI(PointerPosition())) return;
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         Ray ray = cam.ScreenPointToRay(PointerPosition());
         Plane ground = new Plane(Vector3.up, Vector3.zero);
