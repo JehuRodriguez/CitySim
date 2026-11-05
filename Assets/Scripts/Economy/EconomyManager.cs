@@ -9,6 +9,8 @@ public class EconomyManager : MonoBehaviour
 
     public int Money { get; private set; }
 
+    public float IncomeMultiplier { get; set; } = 1f;
+
     public event Action<int> OnMoneyChanged;
 
     private void Awake()
@@ -29,6 +31,7 @@ public class EconomyManager : MonoBehaviour
 
     public void AddMoney(int amount)
     {
+        amount = Mathf.RoundToInt(amount * IncomeMultiplier);
         if (amount <= 0) return;
         Money += amount;
         OnMoneyChanged?.Invoke(Money);
@@ -41,5 +44,6 @@ public class EconomyManager : MonoBehaviour
         OnMoneyChanged?.Invoke(Money);
         return true;
     }
+
 
 }
