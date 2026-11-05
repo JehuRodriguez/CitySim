@@ -14,10 +14,17 @@ public class UIManager : MonoBehaviour
     //Mensaje//
     [SerializeField] private TMP_Text messageText;
 
+    //Eventos y metas//
+    [SerializeField] private TMP_Text eventText;
+    [SerializeField] private TMP_Text goalText;
+    [SerializeField] private TMP_Text victoryText;
+
     //Imagen de cada boton//
     [SerializeField] private Image[] buttonImages;
 
     private float messageTimer;
+    private float victoryTimer;
+
 
     private void Start()
     {
@@ -26,6 +33,9 @@ public class UIManager : MonoBehaviour
         populationText.text = "Población: " + CitizenManager.Instance.Population;
         employedText.text = "Empleados: " + CitizenManager.Instance.Employed;
         messageText.text = "";
+        eventText.text = "";
+        victoryText.text = "";
+        goalText.text = GoalManager.Instance.GetProgressText();
         ShowSelection();
 
         EconomyManager.Instance.OnMoneyChanged += HandleMoneyChanged;
@@ -33,6 +43,9 @@ public class UIManager : MonoBehaviour
         CitizenManager.Instance.OnPopulationChanged += HandlePopulationChanged;
         BuildManager.Instance.OnSelectionChanged += HandleSelectionChanged;
         BuildManager.Instance.OnMessage += ShowMessage;
+        EventManager.Instance.OnEventChanged += HandleEventChanged;
+        GoalManager.Instance.OnProgressChanged += HandleGoalProgress;
+        GoalManager.Instance.OnGoalReached += HandleGoalReached;
     }
 
     private void OnDestroy()
@@ -48,6 +61,13 @@ public class UIManager : MonoBehaviour
             BuildManager.Instance.OnSelectionChanged -= HandleSelectionChanged;
             BuildManager.Instance.OnMessage -= ShowMessage;
         }
+        if (EventManager.Instance != null)
+            EventManager.Instance.OnEventChanged -= HandleEventChanged;
+        if (GoalManager.Instance != null)
+        {
+            GoalManager.Instance.OnProgressChanged -= HandleGoalProgress;
+            GoalManager.Instance.OnGoalReached -= HandleGoalReached;
+        }
     }
 
     private void Update()
@@ -56,6 +76,12 @@ public class UIManager : MonoBehaviour
         {
             messageTimer -= Time.deltaTime;
             if (messageTimer <= 0f) messageText.text = "";
+        }
+
+        if (victoryTimer > 0f)
+        {
+            victoryTimer -= Time.deltaTime;
+            if (victoryTimer <= 0f) victoryText.text = "";
         }
     }
 
@@ -79,6 +105,24 @@ public class UIManager : MonoBehaviour
     private void HandleSelectionChanged(Building building)
     {
         ShowSelection();
+    }
+
+    private void HandleEventChanged(string eventName)
+    {
+        eventText.text = eventName == "" ? "" : "Evento: " + eventName;
+    }
+
+    private void HandleGoalProgress(string text)
+    {
+        goalText.text = text;
+    }
+
+    private void HandleGoalReached()
+    {
+        goalText.text = "¡Meta cumplida!";
+        victoryText.text = "¡GANASTE!\nTu ciudad tiene " + CitizenManager.Instance.Population +
+                           " habitantes y $" + EconomyManager.Instance.Money;
+        victoryTimer = 8f;
     }
 
     private void ShowSelection()
