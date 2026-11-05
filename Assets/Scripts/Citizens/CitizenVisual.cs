@@ -13,8 +13,7 @@ public class CitizenVisual : MonoBehaviour
     private float speed;
     private float waitTime;
 
-
-    private int[] routine = { 0, 1, 2, 3 };
+    private int[] routine = { 0, 1, 2, 3, 4, 5 };
     private int step;
 
     private void Awake()
@@ -27,13 +26,13 @@ public class CitizenVisual : MonoBehaviour
         citizen = newCitizen;
         destination = citizen.HomeTransform;
 
+        // Cada ciudadano es distinto
         speed = Random.Range(2.5f, 5f);
         ShuffleRoutine();
         step = Random.Range(0, routine.Length);
 
         Vector2 around = Random.insideUnitCircle.normalized * 1.5f;
         offset = new Vector3(around.x, 0f, around.y);
-
     }
 
     private void ShuffleRoutine()
@@ -85,11 +84,27 @@ public class CitizenVisual : MonoBehaviour
                 return parks[Random.Range(0, parks.Length)].transform;
         }
 
+        if (place == 4)
+        {
+            Restaurant[] restaurants = FindObjectsByType<Restaurant>(FindObjectsSortMode.None);
+            if (restaurants.Length > 0)
+                return restaurants[Random.Range(0, restaurants.Length)].transform;
+        }
+
+        if (place == 5)
+        {
+            Clinic[] clinics = FindObjectsByType<Clinic>(FindObjectsSortMode.None);
+            if (clinics.Length > 0)
+                return clinics[Random.Range(0, clinics.Length)].transform;
+        }
+
         return citizen.HomeTransform;
     }
 
+
     private void Update()
     {
+
         if (citizen == null || destination == null) return;
 
         rend.material.color = citizen.HasJob ? employedColor : unemployedColor;
